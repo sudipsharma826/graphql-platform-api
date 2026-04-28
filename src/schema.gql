@@ -22,6 +22,26 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Post {
+  """Author of the post"""
+  user: User
+  title: String!
+  subtitle: String!
+  content: String!
+  category: [String!]!
+  slug: String!
+  image: String!
+  postViews: Float!
+  usersLikeList: [String!]!
+  usersCommentList: [String!]!
+  usersLoveList: [String!]!
+  usersSaveList: [String!]!
+  isFeatured: Boolean!
+  status: String!
+  createdAt: DateTime!
+}
+
 type Query {
   getUser: [User!]!
+  getPosts: [Post!]!
 }
