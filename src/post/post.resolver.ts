@@ -10,6 +10,7 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { CreatePostInput } from './types/create-post.input';
 import { CurrentUserPayload } from 'src/common/types/current-user.type';
+import { PostQueryFilter } from './types/postQueryFilter.type';
 
 @Resolver(() => Post)
 export class PostResolver {
@@ -17,11 +18,19 @@ export class PostResolver {
     private readonly postService: PostService,
     private readonly userService: UserService,
   ) {}
-  // Query
+  // Query ( TO List the post on the various filter like search, category, isFeatured and word limit)
   @Query(() => [Post])
-  async getPosts(@Args() args: GetPostsArgs) {
-    return this.postService.getPosts(args.wordLimit);
-  }
+getPosts(
+  @Args('filter', { type: () => PostQueryFilter, nullable: true })
+  filter: PostQueryFilter,
+) {
+  return this.postService.getPosts(filter || {});
+}
+
+@Query(() => Post)
+getPostBySlug(@Args('slug') slug: string, nullable: false) {
+  return this.postService.getPostBySlug(slug);
+}
 
   //Muation
   @UseGuards(AuthGuard)

@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { PostDocument } from './schema/post.schema';
 import { CreatePostInput } from './types/create-post.input';
 import { CurrentUserPayload } from 'src/common/types/current-user.type';
+import { PostQueryFilter } from './types/postQueryFilter.type';
 
 @Injectable()
 export class PostService {
@@ -12,14 +13,57 @@ export class PostService {
     private postModel: Model<PostDocument>,
   ) {}
 
-  async getPosts(wordLimit?: number) {
-    const posts = await this.postModel.find();
+   async getPosts(filterInput: PostQueryFilter) {
+  const filter: any = {};
 
-    return posts.map((post) => ({
-      ...post.toObject(),
-      content: this.limitContent(post.content, wordLimit), // Limit the content based on the provided word limit
-    }));
+  // search title and content
+  if (filterInput.search) {
+    filter.$or = [
+      { title: { $regex: filterInput.search, $options: 'i' } },
+      { content: { $regex: filterInput.search, $options: 'i' } },
+    ];
   }
+
+  // category filter
+  if (filterInput.category) {
+    filter.category = filterInput.category;
+  }
+
+  // isFeatured filter (only when true)
+  if (filterInput.isFeatured === true) {
+    filter.isFeatured = true;
+  }
+
+  const posts = await this.postModel.find(filter);
+
+  // word limit
+  if (filterInput.wordLimit) {
+    return posts.map(post => {
+      const limitedContent = post.content
+        ?.split(' ')
+        .slice(0, filterInput.wordLimit)
+        .join(' ');
+
+      return {
+        ...post.toObject(),
+        content: limitedContent,
+      };
+    });
+  }
+
+  return posts;
+} 
+
+  // Get Post By Slug
+  async getPostBySlug(slug: string) {
+  const post = await this.postModel.findOne({ slug });
+
+  if (!post) {
+    throw new NotFoundException('Post not found');
+  }
+
+  return post;
+}
 
   //Create Post
   async createPost(input: CreatePostInput, user: CurrentUserPayload) {

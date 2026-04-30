@@ -43,7 +43,15 @@ type Post {
 
 type Query {
   getUser: [User!]!
-  getPosts(wordLimit: Int = 100): [Post!]!
+  getPosts(filter: PostQueryFilter): [Post!]!
+  getPostBySlug(slug: String!): Post!
+}
+
+input PostQueryFilter {
+  search: String
+  category: String
+  isFeatured: Boolean
+  wordLimit: Int
 }
 
 type Mutation {
