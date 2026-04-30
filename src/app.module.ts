@@ -27,7 +27,6 @@ import { PostModule } from './post/post.module';
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       autoSchemaFile: 'src/schema.gql',
-      context: ({ req }) => ({ req }),
     }),
     UserModule,
     PostModule,

@@ -13,57 +13,57 @@ export class PostService {
     private postModel: Model<PostDocument>,
   ) {}
 
-   async getPosts(filterInput: PostQueryFilter) {
-  const filter: any = {};
+  async getPosts(filterInput: PostQueryFilter) {
+    const filter: Record<string, unknown> = {};
 
-  // search title and content
-  if (filterInput.search) {
-    filter.$or = [
-      { title: { $regex: filterInput.search, $options: 'i' } },
-      { content: { $regex: filterInput.search, $options: 'i' } },
-    ];
+    // search title and content
+    if (filterInput.search) {
+      filter.$or = [
+        { title: { $regex: filterInput.search, $options: 'i' } },
+        { content: { $regex: filterInput.search, $options: 'i' } },
+      ];
+    }
+
+    // category filter
+    if (filterInput.category) {
+      filter.category = filterInput.category;
+    }
+
+    // isFeatured filter (only when true)
+    if (filterInput.isFeatured === true) {
+      filter.isFeatured = true;
+    }
+
+    const posts = await this.postModel.find(filter);
+
+    // word limit
+    if (filterInput.wordLimit) {
+      return posts.map((post) => {
+        const limitedContent = post.content
+          ?.split(' ')
+          .slice(0, filterInput.wordLimit)
+          .join(' ');
+
+        return {
+          ...post.toObject(),
+          content: limitedContent,
+        };
+      });
+    }
+
+    return posts;
   }
-
-  // category filter
-  if (filterInput.category) {
-    filter.category = filterInput.category;
-  }
-
-  // isFeatured filter (only when true)
-  if (filterInput.isFeatured === true) {
-    filter.isFeatured = true;
-  }
-
-  const posts = await this.postModel.find(filter);
-
-  // word limit
-  if (filterInput.wordLimit) {
-    return posts.map(post => {
-      const limitedContent = post.content
-        ?.split(' ')
-        .slice(0, filterInput.wordLimit)
-        .join(' ');
-
-      return {
-        ...post.toObject(),
-        content: limitedContent,
-      };
-    });
-  }
-
-  return posts;
-} 
 
   // Get Post By Slug
   async getPostBySlug(slug: string) {
-  const post = await this.postModel.findOne({ slug });
+    const post = await this.postModel.findOne({ slug });
 
-  if (!post) {
-    throw new NotFoundException('Post not found');
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    return post;
   }
-
-  return post;
-}
 
   //Create Post
   async createPost(input: CreatePostInput, user: CurrentUserPayload) {

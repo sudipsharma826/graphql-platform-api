@@ -1,10 +1,15 @@
-import { Args, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { PostService } from './post.service';
 import { Query } from '@nestjs/graphql';
 import { Post } from './types/post.type';
 import { User } from '../user/types/user.type';
 import { UserService } from '../user/user.service';
-import { GetPostsArgs } from './types/post.args';
 import { UseGuards } from '@nestjs/common';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { AuthGuard } from 'src/common/guards/auth.guard';
@@ -20,30 +25,27 @@ export class PostResolver {
   ) {}
   // Query ( TO List the post on the various filter like search, category, isFeatured and word limit)
   @Query(() => [Post])
-getPosts(
-  @Args('filter', { type: () => PostQueryFilter, nullable: true })
-  filter: PostQueryFilter,
-) {
-  return this.postService.getPosts(filter || {});
-}
+  getPosts(
+    @Args('filter', { type: () => PostQueryFilter, nullable: true })
+    filter: PostQueryFilter,
+  ) {
+    return this.postService.getPosts(filter || {});
+  }
 
-@Query(() => Post)
-getPostBySlug(@Args('slug') slug: string, nullable: false) {
-  return this.postService.getPostBySlug(slug);
-}
+  @Query(() => Post)
+  getPostBySlug(@Args('slug') slug: string) {
+    return this.postService.getPostBySlug(slug);
+  }
 
   //Muation
   @UseGuards(AuthGuard)
-@Mutation(() => Post)
-async createPost(
-  @Args('input') input: CreatePostInput,
-  @CurrentUser() user : CurrentUserPayload,
-) {
-  return this.postService.createPost(input, user);
-}
-
-
-
+  @Mutation(() => Post)
+  async createPost(
+    @Args('input') input: CreatePostInput,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
+    return this.postService.createPost(input, user);
+  }
 
   //Get the user details from the post
   @ResolveField(() => User, { nullable: true })
