@@ -6,10 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start": "node dist/main",
     "start:dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register --ignore-watch node_modules src/main.ts",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -58,7 +58,7 @@
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "5.7.3",
+    "typescript": "^5.6.3",
     "typescript-eslint": "^8.20.0"
   },
   "jest": {

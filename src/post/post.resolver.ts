@@ -2,8 +2,8 @@ import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { PostService } from './post.service';
 import { Query } from '@nestjs/graphql';
 import { Post } from './types/post.type';
-import { User } from 'src/user/types/user.type';
-import { UserService } from 'src/user/user.service';
+import { User } from '../user/types/user.type';
+import { UserService } from '../user/user.service';
 
 @Resolver(() => Post)
 export class PostResolver {

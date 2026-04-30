@@ -3,7 +3,7 @@ import { PostService } from './post.service';
 import { PostResolver } from './post.resolver';
 import { PostSchema } from './schema/post.schema';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserModule } from 'src/user/user.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: 'Post', schema: PostSchema }]),UserModule],
