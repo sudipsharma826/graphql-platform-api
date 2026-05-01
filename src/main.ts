@@ -9,8 +9,8 @@ async function bootstrap() {
   const port = configService.get<number>('PORT') || 3000;
   const clientUrl = configService.get<string>('CLIENT_URL');
   const isProd = configService.get<string>('NODE_ENV') === 'production';
-  //Support the multidomain origin 
-  const allowedOrigins = clientUrl?.split(',').map(url => url.trim()) || [];
+  //Support the multidomain origin
+  const allowedOrigins = clientUrl?.split(',').map((url) => url.trim()) || [];
 
   app.enableCors({
     origin: allowedOrigins,
