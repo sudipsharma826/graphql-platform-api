@@ -14,6 +14,7 @@ This API powers the backend for a blog platform. It lets clients list posts, fet
 - Authenticated post creation
 - User lookup and author resolution
 - Environment-based configuration
+- Containerized the backend application using Docker for consistent development and deployment environments
 
 ## Project Structure
 
@@ -83,6 +84,3 @@ Key operations include:
 - `createPost` - create a post for the authenticated user
 - `getUser` - list users
 
-## License
-
-UNLICENSED
