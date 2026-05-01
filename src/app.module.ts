@@ -6,6 +6,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -32,6 +33,6 @@ import { PostModule } from './post/post.module';
     UserModule,
     PostModule,
   ],
-  controllers: [],
+  controllers: [AppController],
 })
 export class AppModule {}
