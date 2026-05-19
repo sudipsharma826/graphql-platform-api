@@ -7,15 +7,19 @@ import {
 } from '@nestjs/graphql';
 import { PostService } from './post.service';
 import { Query } from '@nestjs/graphql';
-import { Post } from './types/post.type';
+import { Post } from './types/post/post.type';
 import { User } from '../user/types/user.type';
 import { UserService } from '../user/user.service';
 import { UseGuards } from '@nestjs/common';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { AuthGuard } from '../common/guards/auth.guard';
-import { CreatePostInput } from './types/create-post.input';
+import { AdminGuard } from '../common/guards/admin.guard';
+import { CreatePostInput } from './types/post/create-post.input';
 import { CurrentUserPayload } from '../common/types/current-user.type';
-import { PostQueryFilter } from './types/postQueryFilter.type';
+import { PostQueryFilter } from './types/post/postQueryFilter.type';
+import { Category } from './types/categorty/category.type';
+import { PostDocument } from './schema/post.schema';
+import { UpdatePostInput } from './types/post/update_post.input';
 
 @Resolver(() => Post)
 export class PostResolver {
@@ -38,7 +42,7 @@ export class PostResolver {
   }
 
   //Muation
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @Mutation(() => Post)
   async createPost(
     @Args('input') input: CreatePostInput,
@@ -47,15 +51,41 @@ export class PostResolver {
     return this.postService.createPost(input, user);
   }
 
+  @UseGuards(AuthGuard, AdminGuard)
+  @Mutation(() => Post)
+  async updatePost(
+    @Args('id') id: string,
+    @Args('input') input: UpdatePostInput,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
+    return this.postService.updatePost(id, input, user);
+  }
+
+  @UseGuards(AuthGuard, AdminGuard)
+  @Mutation(() => Boolean)
+  async deletePost(
+    @Args('id') id: string,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
+    const res = await this.postService.deletePost(id, user);
+    return !!res;
+  }
+
   //Get the user details from the post
   @ResolveField(() => User, { nullable: true })
   async user(@Parent() post: Post) {
-    const authorEmail = (post as Post & { authorEmail?: string }).authorEmail;
+    const userId = (post as Post & { userId?: string }).userId;
 
-    if (!authorEmail) {
+    if (!userId) {
       return null;
     }
 
-    return this.userService.getUserByEmail(authorEmail);
+    return this.userService.getUserById(userId);
+  }
+
+  //Get the category details for the post
+  @ResolveField(() => [Category])
+  async categories(@Parent() post: PostDocument) {
+    return this.postService.getCategoriesForPost(post);
   }
 }

@@ -20,6 +20,9 @@ export class User {
   @Prop({ default: false })
   isAdmin!: boolean;
 
+  @Prop({ default: false })
+  isSigned!: boolean;
+
   @Prop({ default: null })
   lastLogin!: Date;
 
