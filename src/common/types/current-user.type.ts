@@ -7,4 +7,5 @@ export interface CurrentUserPayload {
   photoURL?: string;
   lastLogin?: string | Date | null;
   isAdmin?: boolean;
+  isSigned?: boolean;
 }

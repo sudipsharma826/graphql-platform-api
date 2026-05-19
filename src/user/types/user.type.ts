@@ -6,13 +6,13 @@ export class User {
   username!: string;
   @Field()
   email!: string;
-  @Field({ nullable: true })
-  password!: string;
   @Field()
   photoURL!: string;
   @Field()
   isAdmin!: boolean;
   @Field({ description: 'Indicates if the user is currently signed in' })
+  isSigned!: boolean;
+  @Field()
   lastLogin!: Date;
   @Field(() => [String])
   likedPosts!: string[];

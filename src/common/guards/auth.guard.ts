@@ -16,16 +16,22 @@ export class AuthGuard implements CanActivate {
     const req = gqlContext.req;
     const authHeader = req.headers.authorization;
 
-    if (!authHeader) return false;
+    let token = req.cookies?.accessToken; // get token set while the login or signup, if exist
+    console.log('AuthGuard - Token from cookies:', token);
+    if (!token && authHeader) {
+      const [scheme, bearerToken] = authHeader.split(' ');
+      if (scheme?.toLowerCase() === 'bearer' && bearerToken) {
+        token = bearerToken;
+      }
+    }
 
-    const token = authHeader.split(' ')[1];
+    if (!token) return false;
+
     const secretKey = this.configService.get<string>('SECRET_KEY');
-
-    if (!token || !secretKey) return false;
+    if (!secretKey) return false;
 
     try {
       const decoded = jwt.verify(token, secretKey) as CurrentUserPayload;
-
       req.user = decoded;
       return true;
     } catch {

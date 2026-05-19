@@ -1,37 +1,47 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { User } from '../../user/types/user.type';
+import { User } from '../../../user/types/user.type';
+import { Category } from '../categorty/category.type';
+import { Schema } from '@nestjs/mongoose';
 
 @ObjectType()
 export class Post {
   id!: string;
+
   @Field(() => User, { description: 'Author of the post', nullable: true })
   user!: User;
+
   @Field()
   title!: string;
+
   @Field()
   subtitle!: string;
+
   @Field()
   content!: string;
-  @Field(() => [String])
-  category!: string[];
+
+  @Field(() => [Category], { description: 'Categories of the post' })
+  categories!: Category[];
   @Field()
   slug!: string;
   @Field()
   image!: string;
   @Field()
-  postViews!: number;
+  views!: number;
   @Field(() => [String])
-  usersLikeList!: string[];
+  likedByUsers!: string[];
   @Field(() => [String])
-  usersCommentList!: string[];
+  commentedByUsers!: string[];
   @Field(() => [String])
-  usersLoveList!: string[];
+  lovedByUsers!: string[];
   @Field(() => [String])
-  usersSaveList!: string[];
+  savedByUsers!: string[];
   @Field()
   isFeatured!: boolean;
   @Field()
   status!: string;
+
   @Field()
   createdAt!: Date;
+  @Field()
+  updatedAt!: Date;
 }

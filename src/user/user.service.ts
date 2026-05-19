@@ -13,7 +13,12 @@ export class UserService {
   async getUsers() {
     return this.userModel.find();
   }
+
+  async getUserById(id: string) {
+    return this.userModel.findById(id);
+  }
+
   async getUserByEmail(email: string) {
-    return this.userModel.findOne({ email });
+    return this.userModel.findOne({ email: email.trim().toLowerCase() });
   }
 }

@@ -7,6 +7,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
 import { AppController } from './app.controller';
+import { Request, Response } from 'express';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AppController } from './app.controller';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         introspection: true,
+        playground: false, // Disable the default GraphQL Playground
         plugins: [ApolloServerPluginLandingPageLocalDefault()],
         autoSchemaFile: 'src/schema.gql',
         cors: {
@@ -36,11 +38,11 @@ import { AppController } from './app.controller';
               .get<string>('CLIENT_URL')
               ?.split(',')
               .map((url) => url.trim()) || [],
-          credentials: config.get<string>('NODE_ENV') === 'production', // only true in production
+          credentials: true,
           allowedHeaders: ['Content-Type', 'Authorization'],
           methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'],
         },
-        context: ({ req }: { req: Request }) => ({ req }),
+        context: ({ req, res }: { req: Request; res: Response }) => ({ req, res }),
       }),
     }),
     UserModule,
